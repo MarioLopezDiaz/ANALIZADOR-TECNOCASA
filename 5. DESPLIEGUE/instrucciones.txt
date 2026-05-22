@@ -1,0 +1,3 @@
+& "C:/Users/mario/venv_tf/Scripts/Activate.ps1"
+cd "5. DESPLIEGUE"
+streamlit run app.py

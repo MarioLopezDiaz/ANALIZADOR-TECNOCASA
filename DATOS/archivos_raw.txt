@@ -1,0 +1,4 @@
+1txUvN4Rir4iftTRrf6C9KDnThx6EavBK,distrito_barrios.parquet,datos
+1FqShKrIeqwMTpMdaoNyH1TLEf7SkGLMS,municipios.parquet,datos
+1Y3xBSHd0i6IO2T6iD_P8vVP3Q6z-GnMn,tecnocasa_datos_sin_limpiar.parquet,datos
+1pU2Q-hoNyZX7Y_g9l4TiPZk9eGknzBIZ,imagenes_tecnocasa.tar,imagenes

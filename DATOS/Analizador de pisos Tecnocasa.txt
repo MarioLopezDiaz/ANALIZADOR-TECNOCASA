@@ -1,0 +1,16 @@
+Se me ha ocurrido un sistema a partir de web scrapping de Tecnocasa que haga lo siguiente:
+
+Un analizador de pisos y como influye el precio en el piso. Por ejemplo, analizar las imágenes (con un modelo como gpt-4o, el texto, localizaciones etc...) y sacar un informe general de qué es lo que más influye en el precio.
+
+Ahí por ejemplo podrías descubrir patrones y alomejor puede ayudar a las personas a encontrar pisos más baratos.
+
+Por ejemplo, una IA que tenga una funcionalidad añadida que compara precios medios y ajusta según coste de vida. Calcula una puntuación personalizada según lo que el cliente valore (nivel de ruido reducido, proximidad a zonas verdes, presencia de trastero...). Esta puntuación puede ser diseñada a partir de estos criterios y la conexión con un LLM.
+
+Es mi idea para el TFG, por tanto me gustaría saber como lo estructurarias.
+Se me ha ocurrido hacer una fase de Adquisición de Datos en la que haga scrapping de la web de Tecnocasa y almacene en un csv un gran volumen de inmuebles, con sus características e imágenes.
+
+Posteriormente realizar un análisis exploratorio (EDA) después de esa fase de preprocesado.
+
+Después realizar una fase de modelado, con los datos ya listos para entrenar tras haberlos analizado, limpiado, transformado y demás. Aquí las imágenes ya deben haber sido analizadas y el texto de la descripción también. Así como el uso de APIs como Google Maps u otras de utilidad. En esta fase los datos serán entrenados de distintas formas (Random Forest, XGBoost, Redes Neuronales con Tensorflow\...)
+
+Y para terminar una fase de despliegue con un análisis final con distintas visualizaciones, ya sea un Dash o una web que permita una búsqueda inteligente en función de las preferencias, y conclusiones con los resultados obtenidos
