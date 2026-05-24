@@ -200,44 +200,73 @@ except:
 
 # INVERSIÓN
 with tab_roi:
-    
     col_inv1, col_inv2 = st.columns(2)
     with col_inv1:
-        # Si la IA ya calculó un precio, lo ponemos como sugerencia de compra
         valor_defecto = int(precio_estimado_global) if precio_estimado_global > 0 else 200000
         precio_oferta = st.number_input("Precio de Compra (€)", value=valor_defecto, step=1000)
-        impuestos = st.number_input("Impuestos (%)", value=10.0)
-        reforma = st.number_input("Reforma (€)", value=0, step=1000)
-    
+        impuestos     = st.number_input("Impuestos (%)", value=10.0,
+                            help="ITP segunda mano: 6-10% según CCAA. IVA obra nueva: 10%.")
+        reforma       = st.number_input("Reforma (€)", value=0, step=1000)
+
     with col_inv2:
         pct_financiacion = st.slider("% Financiación", 0, 100, 80)
-        interes = st.number_input("Interés Anual (%)", value=3.5, step=0.1)
-        plazo = st.slider("Años Hipoteca", 10, 40, 30)
+        interes          = st.number_input("Interés Anual (%)", value=3.5, step=0.1)
+        plazo            = st.slider("Años Hipoteca", 10, 40, 30)
+        # ── NUEVO: gastos operativos ──
+        gastos_pct       = st.number_input(
+            "Gastos operativos anuales (%)",
+            value=1.5, step=0.1,
+            help="IBI + comunidad + seguro + vacíos. Típicamente 1–2% del precio."
+        )
 
-    # Cálculos Financieros
-    total_inversion = precio_oferta * (1 + impuestos/100) + reforma
-    prestamo = precio_oferta * (pct_financiacion/100)
-    entrada = total_inversion - prestamo
-    
+    # ── Cálculos ──────────────────────────────────────────────────────
+    total_inversion = precio_oferta * (1 + impuestos / 100) + reforma
+    prestamo        = precio_oferta * (pct_financiacion / 100)
+    entrada         = total_inversion - prestamo
+
     # Cuota (Fórmula Francesa)
-    if prestamo > 0:
-        r = interes/100/12
-        n = plazo*12
-        cuota = prestamo*r*(1+r)**n/((1+r)**n-1)
-    else: cuota = 0
-    
-    # Rentabilidad Estimada (Yield)
-    # Asumimos rentabilidad bruta del 5% si no hay datos
-    yield_zona = 0.05 
+    if prestamo > 0 and interes > 0:
+        r     = interes / 100 / 12
+        n     = plazo * 12
+        cuota = prestamo * r * (1 + r)**n / ((1 + r)**n - 1)
+    elif prestamo > 0:
+        cuota = prestamo / (plazo * 12)   # interés 0%
+    else:
+        cuota = 0
+
+    # ── Yield dinámico según renta de la zona ────────────────
+    # Zonas de renta alta → menos yield (precio alto, alquiler no sube igual)
+    if renta_interna >= 50:
+        yield_zona = 0.035
+    elif renta_interna >= 35:
+        yield_zona = 0.05
+    else:
+        yield_zona = 0.065
     alquiler_estimado = (precio_oferta * yield_zona) / 12
-    cash_flow = alquiler_estimado - cuota
-    roi = (alquiler_estimado * 12) / total_inversion * 100
+
+    # ── Cash flow y ROI netos (descontando gastos operativos) ─
+    gastos_mensuales = (precio_oferta * gastos_pct / 100) / 12
+    cash_flow        = alquiler_estimado - cuota - gastos_mensuales
+    roi_bruto        = (alquiler_estimado * 12) / total_inversion * 100
+    roi_neto         = ((alquiler_estimado - gastos_mensuales) * 12) / total_inversion * 100
 
     st.markdown("---")
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Cuota Mensual", f"{cuota:,.0f} €")
-    m2.metric("Alquiler Estimado", f"{alquiler_estimado:,.0f} €", delta=f"Rentabilidad {roi:.1f}%")
-    m3.metric("Cash Flow", f"{cash_flow:,.0f} €", delta_color="normal" if cash_flow > 0 else "inverse")
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Cuota Mensual",      f"{cuota:,.0f} €")
+    m2.metric("Alquiler Estimado",  f"{alquiler_estimado:,.0f} €",
+              delta=f"Yield {yield_zona*100:.1f}%")
+    m3.metric("Cash Flow Neto",     f"{cash_flow:,.0f} €",
+              delta_color="normal" if cash_flow > 0 else "inverse")
+    m4.metric("ROI Neto",           f"{roi_neto:.1f}%",
+              delta=f"Bruto {roi_bruto:.1f}%")
+
+    # Desglose transparente
+    with st.expander("📊 Desglose financiero completo"):
+        st.write(f"**Entrada necesaria:** {entrada:,.0f} € (20% precio + impuestos + reforma)")
+        st.write(f"**Préstamo:** {prestamo:,.0f} € a {interes}% durante {plazo} años")
+        st.write(f"**Gastos operativos:** {gastos_mensuales:,.0f} €/mes "
+                 f"({gastos_pct}% anual sobre precio de compra)")
+        st.write(f"**ROI bruto:** {roi_bruto:.2f}%  |  **ROI neto:** {roi_neto:.2f}%")
 
 col_btn, col_chat = st.columns([1, 4])
 with col_btn:
@@ -271,7 +300,7 @@ if predict_btn:
         st.subheader("🏘️ Testigos Comparables (Vendidos en la zona)")
         testigos = market.encontrar_testigos(df_ref, user_data)
         if testigos is not None:
-            st.dataframe(testigos, use_container_width=True)
+            st.dataframe(testigos, width='stretch')
             st.caption("Estos son los 5 inmuebles más similares encontrados en nuestra base de datos histórica.")
         else:
             st.warning("No se encontraron suficientes testigos similares en esta zona.")

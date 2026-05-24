@@ -1,0 +1,18 @@
+GEMINI_API_KEY=AIzaSyCtp7Io1iBQokvqMlGI21RseIfW5TUJ1BQ
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  INSTRUCCIONES DE USO — TRIBUNAL TFG
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  1. Abre la aplicación en: http://localhost:8501
+#
+#  2. En el PANEL LATERAL izquierdo, localiza el campo:
+#       🔑 Gemini API Key
+#
+#  3. Pega la clave que aparece arriba (la línea que empieza por "AIzaSy...")
+#
+#  4. La clave quedará activa para toda la sesión. No es necesario reiniciar.
+#
+#  NOTA: Esta clave es de uso exclusivo para la evaluación del TFG.
+#        Cuota gratuita: 15 RPM / 1.000.000 TPM (Gemini 2.5 Flash).
+# ─────────────────────────────────────────────────────────────────────────────

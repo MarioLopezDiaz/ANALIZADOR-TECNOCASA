@@ -3,7 +3,7 @@ GESTOR DE CARGA DE MODELOS Y DATOS (CACHING)
 --------------------------------------------
 Optimiza el rendimiento de la aplicación mediante el uso de `st.cache_data` y 
 `st.cache_resource`. Se encarga de la deserialización segura (vía joblib) del 
-modelo XGBoost y los pipelines de preprocesamiento, evitando cargas redundantes.
+modelo GBR y los pipelines de preprocesamiento, evitando cargas redundantes.
 """
 
 import streamlit as st
@@ -14,20 +14,19 @@ import joblib
 def load_resources():
     try:
         # Cargar Pipeline
-        try: pipeline = joblib.load('../DATOS/pipeline_final_gbr.pkl')
+        try: pipeline = joblib.load('pipeline_final_gbr.pkl')
         except: 
-            try: pipeline = joblib.load('../DATOS/pipeline_final_xgb.pkl')
-            except: pipeline = joblib.load('../DATOS/pipeline_final_rf.pkl')
+            try: pipeline = joblib.load('pipeline_final_xgb.pkl')
+            except: pipeline = joblib.load('pipeline_final_rf.pkl')
             
-        model_cols = joblib.load('../DATOS/features_columns.pkl')
+        model_cols = joblib.load('features_columns.pkl')
         
         # Limpieza
         for bad_col in ['Precio', 'Precio_m2_Real', 'Log_Precio', 'Precio_m2']:
             if bad_col in model_cols: model_cols.remove(bad_col)
         
         # Datos
-        try: df_ref = pd.read_parquet("../DATOS/tecnocasa_modelo_AUMENTADO.parquet", engine='fastparquet')
-        except: df_ref = pd.read_parquet("tecnocasa_modelo.parquet", engine='fastparquet')
+        df_ref = pd.read_parquet("tecnocasa_modelo.parquet", engine='fastparquet')
         
         options = {
             'zonas': sorted(df_ref['Localizacion_Clave'].dropna().astype(str).unique().tolist()),
