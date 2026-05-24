@@ -18,7 +18,6 @@ tecnocasa-ai-valuator/
 ├── pipeline_final_gbr.pkl        # Modelo GBR serializado
 ├── features_columns.pkl          # Columnas esperadas por el pipeline
 ├── tecnocasa_modelo.parquet      # Dataset histórico de referencia
-├── gemini_api_key.txt            # API Key lista para el tribunal
 ├── imagenes/                     # Carpeta con imágenes de inmueble (IA)
 └── utils/
     ├── config.py                 # Configuración global y estilos
@@ -145,15 +144,6 @@ Para obtener una clave gratuita:
 1. Ve a [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
 2. Crea una clave de API y cópiala en el campo correspondiente del sidebar.
  
-> **Estos recursos están listos para usar directamente. No requieren ninguna configuración adicional.**
- 
-### API Key de Google Gemini (lista para usar)
- 
-La clave necesaria para activar el análisis visual con IA y el asistente conversacional está disponible en el archivo `gemini_api_key.txt` de la raíz del repositorio.
- 
-```
-AIzaSyCtp7Io1iBQokvqMlGI21RseIfW5TUJ1BQ
-```
  
 **Cómo introducirla:**
 1. Arranca la aplicación (`streamlit run app.py`)
